@@ -1,4 +1,5 @@
 ﻿using Oisee.ArcGIS.RestClient.Exceptions;
+using System;
 using System.Net.Http;
 
 namespace Oisee.ArcGIS.RestClient.Common
@@ -29,6 +30,7 @@ namespace Oisee.ArcGIS.RestClient.Common
                 if (httpClient == null)
                 {
                     httpClient = new HttpClient();
+                    httpClient.Timeout = TimeSpan.FromMinutes(30);
                     httpClient.DefaultRequestHeaders.Add("Accept", acceptHeaders);
                 }
 

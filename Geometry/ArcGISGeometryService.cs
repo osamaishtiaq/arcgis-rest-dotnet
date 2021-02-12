@@ -4,11 +4,10 @@ using Oisee.ArcGIS.RestClient.Enums;
 using Oisee.ArcGIS.RestClient.Exceptions;
 using Oisee.ArcGIS.RestClient.Geometry.DTOs;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
+using Oisee.ArcGIS.RestClient.Utils;
 
 namespace Oisee.ArcGIS.RestClient.Geometry
 {
@@ -26,16 +25,16 @@ namespace Oisee.ArcGIS.RestClient.Geometry
             var queryUrl = $"{getRestServiceEndpoint()}/project";
             var payLoadModel = new ArcGISProjectPolygonGeometryParam(new PolygonGeometry[] { geometry });
 
-            var encodedContent = new FormUrlEncodedContent(new List<KeyValuePair<string, string>>
+            var encodedContent = new ArcGISEncodedContent 
             {
-                new KeyValuePair<string, string>("f",responseFormat),
-                new KeyValuePair<string, string>("token",token),
-                new KeyValuePair<string, string>("inSR",inSR),
-                new KeyValuePair<string, string>("outSR",outSR),
-                new KeyValuePair<string, string>("geometries", JsonConvert.SerializeObject(payLoadModel).TrimJsonRequest())
-            });
+                {"f", responseFormat },
+                {"token",token },
+                {"inSR",inSR },
+                {"outSR",outSR },
+                {"geometries", JsonConvert.SerializeObject(payLoadModel).TrimJsonRequest()}
+            };
 
-            var resp = await ArcGISHttpClient.PostAsync(queryUrl, encodedContent);
+            var resp = await ArcGISHttpClient.PostAsync(queryUrl, encodedContent.ToStringUrlEncodedContent());
 
             var respStr = await resp.Content.ReadAsStringAsync();
 
@@ -60,18 +59,18 @@ namespace Oisee.ArcGIS.RestClient.Geometry
 
             PolygonGeometry[] polygonPayload = { geometry };
 
-            var encodedContent = new FormUrlEncodedContent(new List<KeyValuePair<string, string>>()
-                {
-                    new KeyValuePair<string, string>("f",responseFormat),
-                    new KeyValuePair<string, string>("token",token),
-                    new KeyValuePair<string, string>("sr", sr),
-                    new KeyValuePair<string, string>("lengthUnit",lengthUnit),
-                    new KeyValuePair<string, string>("calculationType",calculationType.ToString()),
-                    new KeyValuePair<string, string>("areaUnit", JsonConvert.SerializeObject(areaUnitParam).TrimJsonRequest()),
-                    new KeyValuePair<string, string>("polygons", JsonConvert.SerializeObject(polygonPayload).TrimJsonRequest())
-                });
+            var encodedContent = new ArcGISEncodedContent
+            {
+                {"f",responseFormat },
+                {"token",token },
+                {"sr",sr },
+                { "lengthUnit",lengthUnit},
+                { "calculationType",calculationType.ToString()},
+                { "areaUnit", JsonConvert.SerializeObject(areaUnitParam).TrimJsonRequest()},
+                { "polygons", JsonConvert.SerializeObject(polygonPayload).TrimJsonRequest() }
+            };
 
-            var resp = await ArcGISHttpClient.PostAsync(queryUrl, encodedContent);
+            var resp = await ArcGISHttpClient.PostAsync(queryUrl, encodedContent.ToStringUrlEncodedContent());
 
             var respStr = await resp.Content.ReadAsStringAsync();
 
