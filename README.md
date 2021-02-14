@@ -12,17 +12,17 @@
 
 ```csharp
     // Authentication
-    var authService = new F4GISAuthService(host, username, password);
+    var authService = new ArcGISAuthService(host, username, password);
     // Get Auth Token
     var authTokenResp = await authService.GetToken();
 
     
     // Geometry Service
-    var geometryService = new F4GISGeometryService(host);
+    var geometryService = new ArcGISGeometryService(host);
     // Project Polygons to diffrent spatial reference
     PolygonGeometry projected = await geometryService.ProjectPolygon(authToken, inSR, outSR, originalGeometry);
     // Calculate Areas and Length
-    F4GISAreaLengthResponse areaLenth = await geometryService.CalculateAreasAndLengths(authToken, SR,
+    ArcGISAreaLengthResponse areaLenth = await geometryService.CalculateAreasAndLengths(authToken, SR,
                             EsriGeometryCalcType.preserveShape, EsriAreaUnit.esriAcres, projected);
 
 ```
